@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../../LeavePlanner.Application/LeavePlanner.Application.csproj" />
+    <ProjectReference Include="../../LeavePlanner.Domain/LeavePlanner.Domain.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../LeavePlanner.Api/LeavePlanner.csproj" />
+    <ProjectReference Include="../../LeavePlanner.Application/LeavePlanner.Application.csproj" />
+    <ProjectReference Include="../../LeavePlanner.Domain/LeavePlanner.Domain.csproj" />
+  </ItemGroup>
+</Project>

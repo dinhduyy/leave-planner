@@ -1,0 +1,77 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeavePlanner", "LeavePlanner.Api\LeavePlanner.csproj", "{81398F09-1B97-4929-AF53-0FD17ABD4F00}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeavePlanner.Domain", "LeavePlanner.Domain\LeavePlanner.Domain.csproj", "{7537AA71-AC41-4040-90E5-C62D9913DF20}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeavePlanner.Application", "LeavePlanner.Application\LeavePlanner.Application.csproj", "{D913BDD6-7BC3-45AF-BBD7-DACFC58F9BCB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeavePlanner.Infrastructure", "LeavePlanner.Infrastructure\LeavePlanner.Infrastructure.csproj", "{FF3D1B23-749A-4A91-8642-4C342289DBC8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{BEB5F03F-FC75-4CC3-9005-303498FECD59}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeavePlanner.Domain.Tests", "tests\LeavePlanner.Domain.Tests\LeavePlanner.Domain.Tests.csproj", "{ACEFF3CD-0229-4A14-871C-2AC41422FBC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeavePlanner.Application.Tests", "tests\LeavePlanner.Application.Tests\LeavePlanner.Application.Tests.csproj", "{515C6F9C-EB22-4BEE-9268-54CBCA3F16B0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeavePlanner.Infrastructure.Tests", "tests\LeavePlanner.Infrastructure.Tests\LeavePlanner.Infrastructure.Tests.csproj", "{EF442BCF-C215-48AC-BD1E-7BDE10B55DAE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeavePlanner.Api.Tests", "tests\LeavePlanner.Api.Tests\LeavePlanner.Api.Tests.csproj", "{AFEA542E-15D7-4FB9-A4AD-80BCC71CBBFB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A1DDAA66-094A-4F35-A6D2-CB80CE352E44}"
+	ProjectSection(SolutionItems) = preProject
+		LeavePlanner.http = LeavePlanner.http
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{81398F09-1B97-4929-AF53-0FD17ABD4F00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81398F09-1B97-4929-AF53-0FD17ABD4F00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81398F09-1B97-4929-AF53-0FD17ABD4F00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81398F09-1B97-4929-AF53-0FD17ABD4F00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7537AA71-AC41-4040-90E5-C62D9913DF20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7537AA71-AC41-4040-90E5-C62D9913DF20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7537AA71-AC41-4040-90E5-C62D9913DF20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7537AA71-AC41-4040-90E5-C62D9913DF20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D913BDD6-7BC3-45AF-BBD7-DACFC58F9BCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D913BDD6-7BC3-45AF-BBD7-DACFC58F9BCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D913BDD6-7BC3-45AF-BBD7-DACFC58F9BCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D913BDD6-7BC3-45AF-BBD7-DACFC58F9BCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF3D1B23-749A-4A91-8642-4C342289DBC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF3D1B23-749A-4A91-8642-4C342289DBC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF3D1B23-749A-4A91-8642-4C342289DBC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF3D1B23-749A-4A91-8642-4C342289DBC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACEFF3CD-0229-4A14-871C-2AC41422FBC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACEFF3CD-0229-4A14-871C-2AC41422FBC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACEFF3CD-0229-4A14-871C-2AC41422FBC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACEFF3CD-0229-4A14-871C-2AC41422FBC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{515C6F9C-EB22-4BEE-9268-54CBCA3F16B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{515C6F9C-EB22-4BEE-9268-54CBCA3F16B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{515C6F9C-EB22-4BEE-9268-54CBCA3F16B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{515C6F9C-EB22-4BEE-9268-54CBCA3F16B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF442BCF-C215-48AC-BD1E-7BDE10B55DAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF442BCF-C215-48AC-BD1E-7BDE10B55DAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF442BCF-C215-48AC-BD1E-7BDE10B55DAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF442BCF-C215-48AC-BD1E-7BDE10B55DAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFEA542E-15D7-4FB9-A4AD-80BCC71CBBFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFEA542E-15D7-4FB9-A4AD-80BCC71CBBFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFEA542E-15D7-4FB9-A4AD-80BCC71CBBFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFEA542E-15D7-4FB9-A4AD-80BCC71CBBFB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{ACEFF3CD-0229-4A14-871C-2AC41422FBC0} = {BEB5F03F-FC75-4CC3-9005-303498FECD59}
+		{515C6F9C-EB22-4BEE-9268-54CBCA3F16B0} = {BEB5F03F-FC75-4CC3-9005-303498FECD59}
+		{EF442BCF-C215-48AC-BD1E-7BDE10B55DAE} = {BEB5F03F-FC75-4CC3-9005-303498FECD59}
+		{AFEA542E-15D7-4FB9-A4AD-80BCC71CBBFB} = {BEB5F03F-FC75-4CC3-9005-303498FECD59}
+	EndGlobalSection
+EndGlobal

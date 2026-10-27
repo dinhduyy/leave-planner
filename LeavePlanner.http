@@ -1,0 +1,57 @@
+@LeavePlanner_HostAddress = http://localhost:5257
+
+### Longest continuous break (live Nager.Holidays data)
+POST {{LeavePlanner_HostAddress}}/api/leave-plans/recommendation
+Content-Type: application/json
+Accept: application/json
+
+{
+  "countryCode": "AT",
+  "subdivisionCode": null,
+  "fromDate": "2026-05-01",
+  "toDate": "2026-05-10",
+  "leaveBudget": 2,
+  "priority": "longestBreak"
+}
+
+### Minimum leave, at least seven calendar days
+POST {{LeavePlanner_HostAddress}}/api/leave-plans/recommendation
+Content-Type: application/json
+Accept: application/json
+
+{
+  "countryCode": "AT",
+  "subdivisionCode": "AT-9",
+  "fromDate": "2026-05-01",
+  "toDate": "2026-05-31",
+  "leaveBudget": 4,
+  "priority": "minimumLeave",
+  "minTotalDays": 7
+}
+
+### Best efficiency, at least three calendar days
+POST {{LeavePlanner_HostAddress}}/api/leave-plans/recommendation
+Content-Type: application/json
+Accept: application/json
+
+{
+  "countryCode": "AT",
+  "fromDate": "2026-05-01",
+  "toDate": "2026-05-31",
+  "leaveBudget": 4,
+  "priority": "bestEfficiency",
+  "minTotalDays": 3
+}
+
+### Validation example: minTotalDays is required for bestEfficiency
+POST {{LeavePlanner_HostAddress}}/api/leave-plans/recommendation
+Content-Type: application/json
+Accept: application/json
+
+{
+  "countryCode": "AT",
+  "fromDate": "2026-05-01",
+  "toDate": "2026-05-31",
+  "leaveBudget": 4,
+  "priority": "bestEfficiency"
+}
