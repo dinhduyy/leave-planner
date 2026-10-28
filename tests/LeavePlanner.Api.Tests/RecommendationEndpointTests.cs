@@ -20,6 +20,39 @@ public sealed class RecommendationEndpointTests
     private static readonly DateOnly Friday = new(2026, 5, 1);
 
     [Fact]
+    public async Task UnknownRouteReturnsProblemDetails()
+    {
+        using var factory = Factory((_, _) => []);
+        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            BaseAddress = new Uri("https://localhost")
+        });
+        using var response = await client.GetAsync("/api/unknown");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
+        using var body = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync());
+        Assert.Equal(404, body.RootElement.GetProperty("status").GetInt32());
+    }
+
+    [Fact]
+    public async Task ProductionHttpsResponseIncludesHstsHeader()
+    {
+        using var factory = Factory((_, _) => [])
+            .WithWebHostBuilder(host => host.UseEnvironment("Production"));
+        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            BaseAddress = new Uri("https://example.com")
+        });
+
+        using var response = await client.GetAsync("/api/unknown");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.True(response.Headers.TryGetValues("Strict-Transport-Security", out var values));
+        Assert.Contains("max-age=", Assert.Single(values));
+    }
+
+    [Fact]
     public async Task OpenApiDescribesPriorityAsStringEnum()
     {
         using var factory = Factory((_, _) => []);

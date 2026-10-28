@@ -1,11 +1,10 @@
-using LeavePlanner.Domain.Enums;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using LeavePlanner.Configuration;
+using LeavePlanner.Domain.Enums;
 using LeavePlanner.Errors;
-using LeavePlanner.Domain.Strategies;
 using LeavePlanner.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,8 +46,11 @@ if (app.Environment.IsDevelopment())
 
 if (!app.Environment.IsDevelopment())
 {
+    app.UseHsts();
     app.UseHttpsRedirection();
 }
+
+app.UseStatusCodePages();
 app.MapControllers();
 app.Run();
 
