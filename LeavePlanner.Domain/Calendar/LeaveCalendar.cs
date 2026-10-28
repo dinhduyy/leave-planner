@@ -12,7 +12,9 @@ public sealed class LeaveCalendar
     public LeaveCalendar(DateOnly fromDate, DateOnly toDate, IReadOnlyCollection<ApplicableHoliday> holidays)
     {
         if (fromDate > toDate)
+        {
             throw new ArgumentException("The start date must be on or before the end date.", nameof(fromDate));
+        }
         ArgumentNullException.ThrowIfNull(holidays);
 
         _fromDate = fromDate;
@@ -32,7 +34,9 @@ public sealed class LeaveCalendar
     public DateOnly DateAt(int offset)
     {
         if ((uint)offset >= _requiresLeave.Length)
+        {
             throw new ArgumentOutOfRangeException(nameof(offset));
+        }
 
         return DateOnly.FromDayNumber(_fromDate.DayNumber + offset);
     }
@@ -44,13 +48,17 @@ public sealed class LeaveCalendar
         var startOffset = startDate.DayNumber - _fromDate.DayNumber;
         var endOffset = endDate.DayNumber - _fromDate.DayNumber;
         if (startOffset < 0 || endOffset < startOffset || endOffset >= DayCount)
+        {
             throw new ArgumentOutOfRangeException(nameof(startDate), "The break must be within the calendar range.");
+        }
 
         var dates = new List<DateOnly>();
         for (var offset = startOffset; offset <= endOffset; offset++)
         {
             if (_requiresLeave[offset])
+            {
                 dates.Add(DateAt(offset));
+            }
         }
 
         return dates;

@@ -12,10 +12,14 @@ public sealed class MinimumLeaveStrategy : IRecommendationStrategy
     public bool IsBetter(LeaveCandidate candidate, LeaveCandidate incumbent)
     {
         if (candidate.LeaveDaysRequired != incumbent.LeaveDaysRequired)
+        {
             return candidate.LeaveDaysRequired < incumbent.LeaveDaysRequired;
+        }
 
         if (candidate.TotalDays != incumbent.TotalDays)
+        {
             return candidate.TotalDays > incumbent.TotalDays;
+        }
 
         return candidate.StartDate < incumbent.StartDate;
     }

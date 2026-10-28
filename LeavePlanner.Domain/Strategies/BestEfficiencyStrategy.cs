@@ -14,12 +14,16 @@ public sealed class BestEfficiencyStrategy : IRecommendationStrategy
         var candidateNeedsNoLeave = candidate.LeaveDaysRequired == 0;
         var incumbentNeedsNoLeave = incumbent.LeaveDaysRequired == 0;
         if (candidateNeedsNoLeave != incumbentNeedsNoLeave)
+        {
             return candidateNeedsNoLeave;
+        }
 
         if (candidateNeedsNoLeave)
         {
             if (candidate.TotalDays != incumbent.TotalDays)
+            {
                 return candidate.TotalDays > incumbent.TotalDays;
+            }
 
             return candidate.StartDate < incumbent.StartDate;
         }
@@ -28,13 +32,19 @@ public sealed class BestEfficiencyStrategy : IRecommendationStrategy
         var candidateProduct = (long)candidate.TotalDays * incumbent.LeaveDaysRequired;
         var incumbentProduct = (long)incumbent.TotalDays * candidate.LeaveDaysRequired;
         if (candidateProduct != incumbentProduct)
+        {
             return candidateProduct > incumbentProduct;
+        }
 
         if (candidate.TotalDays != incumbent.TotalDays)
+        {
             return candidate.TotalDays > incumbent.TotalDays;
+        }
 
         if (candidate.LeaveDaysRequired != incumbent.LeaveDaysRequired)
+        {
             return candidate.LeaveDaysRequired < incumbent.LeaveDaysRequired;
+        }
 
         return candidate.StartDate < incumbent.StartDate;
     }

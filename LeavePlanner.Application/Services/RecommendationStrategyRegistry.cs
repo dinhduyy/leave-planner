@@ -12,11 +12,15 @@ public sealed class RecommendationStrategyRegistry
         ArgumentNullException.ThrowIfNull(strategies);
         var registered = strategies.ToArray();
         if (registered.Length == 0)
+        {
             throw new ArgumentException("At least one recommendation strategy must be registered.", nameof(strategies));
+        }
 
         _byPriority = registered.ToDictionary(strategy => strategy.Priority);
         if (!_byPriority.ContainsKey(PlanningPriority.LongestBreak))
+        {
             throw new ArgumentException("The default longest-break strategy must be registered.", nameof(strategies));
+        }
 
     }
 

@@ -11,7 +11,9 @@ public static class RecommendationRequestMapper
         if (request.CountryCode is not { } country || request.FromDate is not { } fromDate ||
             request.ToDate is not { } toDate || request.LeaveBudget is not { } leaveBudget ||
             strategies.Find(request.Priority) is not { } strategy)
+        {
             throw new InvalidOperationException("Only validated recommendation requests can be mapped.");
+        }
 
         var subdivision = request.SubdivisionCode?.Trim().ToUpperInvariant();
         return new PlanningQuery(

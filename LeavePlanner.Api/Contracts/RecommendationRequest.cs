@@ -34,20 +34,30 @@ public sealed record RecommendationRequest : IValidatableObject
         {
             var length = toDate.DayNumber - fromDate.DayNumber + 1;
             if (length <= 0)
+            {
                 yield return new ValidationResult("toDate must be on or after fromDate.", ["toDate"]);
+            }
             else if (length > 366)
+            {
                 yield return new ValidationResult("The inclusive date range cannot exceed 366 days.", ["toDate"]);
+            }
 
             if (MinTotalDays is { } minimum && minimum > length)
+            {
                 yield return new ValidationResult("minTotalDays must be between 1 and the inclusive date range length.", ["minTotalDays"]);
+            }
         }
 
         var strategies = (RecommendationStrategyRegistry?)validationContext.GetService(typeof(RecommendationStrategyRegistry))
             ?? throw new InvalidOperationException("Recommendation strategies are not registered for request validation.");
         var strategy = strategies.Find(Priority);
         if (strategy is null)
+        {
             yield return new ValidationResult("Use longestBreak, minimumLeave, or bestEfficiency.", ["priority"]);
+        }
         else if (strategy.RequiresMinTotalDays && MinTotalDays is null)
+        {
             yield return new ValidationResult("Provide minTotalDays for this priority.", ["minTotalDays"]);
+        }
     }
 }

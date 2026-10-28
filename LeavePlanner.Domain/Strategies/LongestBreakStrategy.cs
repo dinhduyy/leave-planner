@@ -12,10 +12,14 @@ public sealed class LongestBreakStrategy : IRecommendationStrategy
     public bool IsBetter(LeaveCandidate candidate, LeaveCandidate incumbent)
     {
         if (candidate.TotalDays != incumbent.TotalDays)
+        {
             return candidate.TotalDays > incumbent.TotalDays;
+        }
 
         if (candidate.LeaveDaysRequired != incumbent.LeaveDaysRequired)
+        {
             return candidate.LeaveDaysRequired < incumbent.LeaveDaysRequired;
+        }
 
         return candidate.StartDate < incumbent.StartDate;
     }

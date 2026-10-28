@@ -17,8 +17,10 @@ public static class InfrastructureServiceCollectionExtensions
         var timeoutSeconds = configuration.GetValue<int>("HolidayProvider:TimeoutSeconds");
         if (!Uri.TryCreate(baseUrl, UriKind.Absolute, out var baseAddress) ||
             baseAddress.Scheme != Uri.UriSchemeHttps || timeoutSeconds <= 0)
+        {
             throw new InvalidOperationException(
                 "HolidayProvider configuration needs an HTTPS BaseUrl and a positive TimeoutSeconds.");
+        }
 
         services.AddHttpClient<NagerHolidayClient>(client =>
         {

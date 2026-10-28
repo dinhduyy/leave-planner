@@ -1,7 +1,8 @@
+using LeavePlanner.Domain.Enums;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using LeavePlanner.Configuration;
-using LeavePlanner.Controllers;
+using LeavePlanner.Errors;
 using LeavePlanner.Domain.Strategies;
 using LeavePlanner.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
@@ -24,12 +25,14 @@ builder.Services.AddOpenApi(options => options.AddSchemaTransformer((schema, con
 {
     if (context.JsonTypeInfo.Type == typeof(PlanningPriority) ||
         context.JsonTypeInfo.Type == typeof(PlanningPriority?))
+    {
         schema.Type = "string";
+    }
 
     return Task.CompletedTask;
 }));
 builder.Services.AddProblemDetails();
-builder.Services.AddExceptionHandler<PlanningExceptionHandler>();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 builder.Services.AddHolidayInfrastructure(builder.Configuration);
 builder.Services.AddLeavePlanning();
@@ -38,10 +41,14 @@ var app = builder.Build();
 app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
+{
     app.MapOpenApi();
+}
 
 if (!app.Environment.IsDevelopment())
+{
     app.UseHttpsRedirection();
+}
 app.MapControllers();
 app.Run();
 

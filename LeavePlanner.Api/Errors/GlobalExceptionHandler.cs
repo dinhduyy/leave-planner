@@ -1,11 +1,14 @@
+using LeavePlanner.Application.Enums;
 using System.Text.Json;
 using LeavePlanner.Application.Errors;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-namespace LeavePlanner.Controllers;
+namespace LeavePlanner.Errors;
 
-public sealed class PlanningExceptionHandler(ILogger<PlanningExceptionHandler> logger) : IExceptionHandler
+public sealed class GlobalExceptionHandler(
+    ILogger<GlobalExceptionHandler> logger,
+    IProblemDetailsService problemDetailsService) : IExceptionHandler
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
@@ -13,14 +16,12 @@ public sealed class PlanningExceptionHandler(ILogger<PlanningExceptionHandler> l
         CancellationToken cancellationToken)
     {
         if (exception is OperationCanceledException && context.RequestAborted.IsCancellationRequested)
+        {
             return true;
+        }
 
         ProblemDetails problem;
-        if (exception is InvalidPlanningRequestException invalid)
-        {
-            problem = Validation(invalid.Field, invalid.Message);
-        }
-        else if (exception is HolidaySourceException source)
+        if (exception is HolidaySourceException source)
         {
             logger.LogWarning(exception, "Holiday source failure: {Failure}, year: {Year}", source.Failure, source.Year);
             problem = source.Failure switch
@@ -37,13 +38,23 @@ public sealed class PlanningExceptionHandler(ILogger<PlanningExceptionHandler> l
         }
         else
         {
-            return false;
+            logger.LogError(exception, "Unhandled request failure");
+            problem = Create(StatusCodes.Status500InternalServerError,
+                "Internal server error", "An unexpected error occurred.");
         }
 
         context.Response.StatusCode = problem.Status ?? StatusCodes.Status500InternalServerError;
-        context.Response.ContentType = "application/problem+json";
-        await JsonSerializer.SerializeAsync(context.Response.Body, problem, problem.GetType(),
-            JsonOptions, cancellationToken);
+        if (!await problemDetailsService.TryWriteAsync(new ProblemDetailsContext
+            {
+                HttpContext = context,
+                ProblemDetails = problem
+            }))
+        {
+            context.Response.ContentType = "application/problem+json";
+            await JsonSerializer.SerializeAsync(context.Response.Body, problem, problem.GetType(),
+                JsonOptions, cancellationToken);
+        }
+
         return true;
     }
 
@@ -51,7 +62,7 @@ public sealed class PlanningExceptionHandler(ILogger<PlanningExceptionHandler> l
         new(new Dictionary<string, string[]> { [field] = [message] })
         {
             Status = StatusCodes.Status400BadRequest,
-            Title = "Invalid request"
+            Title = "One or more validation errors occurred."
         };
 
     private static ProblemDetails Create(int status, string title, string detail) => new()
