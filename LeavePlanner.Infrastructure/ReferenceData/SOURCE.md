@@ -1,6 +1,6 @@
 # ISO 3166-2 subdivision catalog source
 
-`IsoSubdivisionData.g.cs` contains data derived from Ipregistry's
+[`IsoSubdivisionData.g.cs`](../Constants/IsoSubdivisionData.g.cs) contains data derived from Ipregistry's
 [`subdivisions.csv`](https://github.com/ipregistry/iso3166/blob/9f8c9fb33b9c9447bf7a1edd7b93a98b7355af61/subdivisions.csv).
 The source is pinned to commit
 [`9f8c9fb33b9c9447bf7a1edd7b93a98b7355af61`](https://github.com/ipregistry/iso3166/commit/9f8c9fb33b9c9447bf7a1edd7b93a98b7355af61),

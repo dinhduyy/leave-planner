@@ -1,3 +1,4 @@
+using LeavePlanner.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 using LeavePlanner.Application.Services;
 using LeavePlanner.Application.Models;

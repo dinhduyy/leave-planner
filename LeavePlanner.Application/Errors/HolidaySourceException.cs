@@ -1,12 +1,6 @@
-namespace LeavePlanner.Application.Errors;
+using LeavePlanner.Application.Enums;
 
-public enum HolidaySourceFailure
-{
-    UnsupportedYear,
-    BadData,
-    Unavailable,
-    Timeout
-}
+namespace LeavePlanner.Application.Errors;
 
 public sealed class HolidaySourceException : Exception
 {

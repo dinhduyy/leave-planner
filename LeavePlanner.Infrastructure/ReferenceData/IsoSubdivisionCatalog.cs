@@ -1,5 +1,6 @@
 using System.Collections.Frozen;
 using LeavePlanner.Application.Abstractions;
+using LeavePlanner.Infrastructure.Constants;
 
 namespace LeavePlanner.Infrastructure.ReferenceData;
 

@@ -1,7 +1,7 @@
 // Generated from ipregistry/iso3166 subdivisions.csv at commit 9f8c9fb33b9c9447bf7a1edd7b93a98b7355af61.
 // Retains distinct ISO 3166-2 full codes only where parent_subdivision is empty.
-// See SOURCE.md for source and CC BY-SA 4.0 attribution.
-namespace LeavePlanner.Infrastructure.ReferenceData;
+// See ../ReferenceData/SOURCE.md for source and CC BY-SA 4.0 attribution.
+namespace LeavePlanner.Infrastructure.Constants;
 
 internal static class IsoSubdivisionData
 {

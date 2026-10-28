@@ -1,3 +1,4 @@
+using LeavePlanner.Domain.Enums;
 using LeavePlanner.Domain.Planning;
 using LeavePlanner.Domain.Strategies;
 
