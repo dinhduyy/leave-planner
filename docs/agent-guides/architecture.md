@@ -5,7 +5,7 @@ Read this guide for architecture, dependency, refactor, new class, strategy, or 
 | Project | Owns | Depends on |
 | --- | --- | --- |
 | `LeavePlanner.Domain` | `LeaveCalendar`, candidate and selection models, `PlanningPriority`, pure ranking strategies | No application project |
-| `LeavePlanner.Application` | `LeavePlanningService`, holiday normalization, strategy registry, explanations, planning errors and I/O ports (`IHolidaySource`, `ISubdivisionCatalog`) | Domain |
+| `LeavePlanner.Application` | `LeavePlanningService`, candidate enumeration and selection in its private `FindBest` method, holiday normalization, strategy selection, explanations, planning errors and I/O ports (`IHolidaySource`, `ISubdivisionCatalog`) | Domain |
 | `LeavePlanner.Infrastructure` | Nager HTTP transport and v4 parsing, ISO subdivision reference data and adapters | Application |
 | `LeavePlanner.Api` | Controller, request/response contracts, mapping, validation, exception-to-HTTP mapping, OpenAPI, composition in `Program.cs` | Application, Domain, Infrastructure at the composition root |
 
@@ -16,12 +16,12 @@ API (HTTP contracts and composition) → Application (use case and ports) → Do
                               API → Infrastructure (Nager and reference-data adapters) → Application
 ```
 
-The request path is `LeavePlansController` → `LeavePlanningService` → `IHolidaySource`/`ISubdivisionCatalog` → `HolidayCalendarNormalizer` → `LeaveCalendar` and the selected `IRecommendationStrategy` → `RecommendationResponseMapper`. `NagerHolidayClient` implements the source port; its transport handles HTTP and its parser checks v4 data. Keep each responsibility at that boundary when extending the flow.
+The request path is `LeavePlansController` → `LeavePlanningService` → `IHolidaySource`/`ISubdivisionCatalog` → `HolidayCalendarNormalizer` → `LeavePlanningService.FindBest`, using `LeaveCalendar` and the selected `IRecommendationStrategy` → `RecommendationResponseMapper`. `NagerHolidayClient` implements the source port; its transport handles HTTP and its parser checks v4 data. Keep each responsibility at that boundary when extending the flow.
 
 ## Change placement
 
 - Put calendar and ranking decisions in Domain. Its models and strategies must not use `HttpClient`, ASP.NET types, provider DTOs, configuration, or a clock.
-- Put cross-layer coordination in Application: check country and subdivision support, fetch all required years, normalize records once, choose a strategy, and build a result and explanation. Declare an I/O interface here only for a genuine replaceable boundary.
+- Put cross-layer coordination in Application: check country and subdivision support, fetch all required years, normalize records once, choose a strategy, and build a result and explanation. `LeavePlanningService` also enumerates eligible breaks and selects the best candidate in its private `FindBest` method, using the domain calendar and ranking strategy. Declare an I/O interface here only for a genuine replaceable boundary.
 - Put HTTP, status/timeout handling, JSON parsing, and bundled reference data in Infrastructure. Keep provider payload types out of Domain and public API contracts.
 - Put binding, field validation, HTTP responses, and JSON mapping in API. Controllers delegate planning rather than repeat its rules. `Program.cs` and DI extensions wire implementations.
 

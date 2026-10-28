@@ -5,6 +5,7 @@ using LeavePlanner.Application.Common;
 using LeavePlanner.Application.Errors;
 using LeavePlanner.Application.Models;
 using LeavePlanner.Application.Services;
+using LeavePlanner.Domain.Abstractions;
 using LeavePlanner.Domain.Models;
 using LeavePlanner.Domain.Strategies;
 
@@ -12,9 +13,20 @@ namespace LeavePlanner.Application.Tests;
 
 public sealed class LeavePlanningServiceTests
 {
-    private static readonly RecommendationStrategyRegistry Strategies = new([
+    private static readonly IReadOnlyDictionary<PlanningPriority, IRecommendationStrategy> Strategies = new IRecommendationStrategy[]
+    {
         new LongestBreakStrategy(), new MinimumLeaveStrategy(), new BestEfficiencyStrategy()
-    ]);
+    }.ToDictionary(strategy => strategy.Priority);
+
+    [Fact]
+    public async Task RejectsUnregisteredPriority()
+    {
+        var service = CreateService(new StubHolidaySource(), new StubSubdivisions());
+        var query = Query("AT", null) with { Priority = (PlanningPriority)999 };
+
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
+            service.RecommendAsync(query, CancellationToken.None));
+    }
 
     [Fact]
     public async Task RejectsUnsupportedCountryBeforeFetchingHolidays()
@@ -25,9 +37,8 @@ public sealed class LeavePlanningServiceTests
         var outcome = await service.RecommendAsync(Query("ZZ", null), CancellationToken.None);
 
         var failure = Assert.IsType<Result<PlanningResult, PlanningError>.Failure>(outcome);
-        var validation = Assert.IsType<PlanningValidationError>(failure.Error);
-        Assert.Equal("unsupported_country", validation.Code);
-        Assert.Equal(nameof(PlanningQuery.CountryCode), validation.Field);
+        Assert.Equal("unsupported_country", failure.Error.Code);
+        Assert.Equal(nameof(PlanningQuery.CountryCode), failure.Error.Field);
         Assert.Empty(source.RequestedYears);
     }
 
@@ -40,9 +51,8 @@ public sealed class LeavePlanningServiceTests
         var outcome = await service.RecommendAsync(Query("AT", "AT-0"), CancellationToken.None);
 
         var failure = Assert.IsType<Result<PlanningResult, PlanningError>.Failure>(outcome);
-        var validation = Assert.IsType<PlanningValidationError>(failure.Error);
-        Assert.Equal("invalid_subdivision", validation.Code);
-        Assert.Equal(nameof(PlanningQuery.SubdivisionCode), validation.Field);
+        Assert.Equal("invalid_subdivision", failure.Error.Code);
+        Assert.Equal(nameof(PlanningQuery.SubdivisionCode), failure.Error.Field);
         Assert.Empty(source.RequestedYears);
     }
 

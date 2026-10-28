@@ -2,4 +2,4 @@ using LeavePlanner.Application.Common;
 
 namespace LeavePlanner.Application.Errors;
 
-public abstract record PlanningError(string Code, string Description) : Error(Code, Description);
+public sealed record PlanningError(string Code, string Field, string Description) : Error(Code, Description);

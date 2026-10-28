@@ -1,8 +1,8 @@
-using LeavePlanner.Application.Services;
+using LeavePlanner.Domain.Abstractions;
 using LeavePlanner.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace LeavePlanner.Contracts;
+namespace LeavePlanner.Dtos;
 
 public sealed record RecommendationRequest : IValidatableObject
 {
@@ -47,10 +47,11 @@ public sealed record RecommendationRequest : IValidatableObject
             }
         }
 
-        var strategies = (RecommendationStrategyRegistry?)validationContext.GetService(typeof(RecommendationStrategyRegistry))
+        var strategies = (IReadOnlyDictionary<PlanningPriority, IRecommendationStrategy>?)validationContext
+            .GetService(typeof(IReadOnlyDictionary<PlanningPriority, IRecommendationStrategy>))
             ?? throw new InvalidOperationException("Recommendation strategies are not registered for request validation.");
 
-        var strategy = strategies.Find(Priority);
+        var strategy = strategies.GetValueOrDefault(Priority ?? PlanningPriority.LongestBreak);
 
         if (strategy is null)
         {

@@ -1,7 +1,6 @@
 using LeavePlanner.Domain.Enums;
-using LeavePlanner.Domain.Strategies;
 
-namespace LeavePlanner.Contracts;
+namespace LeavePlanner.Dtos;
 
 public sealed record CalendarPolicyResponse(string WorkingDays, string WeekendDays, string HolidayType, string Scope);
 

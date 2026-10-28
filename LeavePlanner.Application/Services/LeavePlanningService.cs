@@ -5,6 +5,7 @@ using LeavePlanner.Application.Errors;
 using LeavePlanner.Application.Helpers;
 using LeavePlanner.Application.Models;
 using LeavePlanner.Domain.Abstractions;
+using LeavePlanner.Domain.Enums;
 using LeavePlanner.Domain.Models;
 
 namespace LeavePlanner.Application.Services;
@@ -12,7 +13,7 @@ namespace LeavePlanner.Application.Services;
 public sealed class LeavePlanningService(
     IHolidaySource holidaySource,
     ISubdivisionCatalog subdivisionCatalog,
-    RecommendationStrategyRegistry strategies)
+    IReadOnlyDictionary<PlanningPriority, IRecommendationStrategy> strategies)
 {
     public async Task<Result<PlanningResult, PlanningError>> RecommendAsync(PlanningQuery query, CancellationToken cancellationToken)
     {
@@ -20,7 +21,7 @@ public sealed class LeavePlanningService(
 
         if (!availableCountries.Contains(query.CountryCode))
         {
-            return new Result<PlanningResult, PlanningError>.Failure(new PlanningValidationError(
+            return new Result<PlanningResult, PlanningError>.Failure(new PlanningError(
                 PlanningErrorCodes.UnsupportedCountry, nameof(PlanningQuery.CountryCode),
                 "This country is not supported by the holiday provider. Choose a supported ISO alpha-2 code."));
         }
@@ -28,7 +29,7 @@ public sealed class LeavePlanningService(
         if (query.SubdivisionCode is { } subdivisionCode &&
             !subdivisionCatalog.Contains(query.CountryCode, subdivisionCode))
         {
-            return new Result<PlanningResult, PlanningError>.Failure(new PlanningValidationError(
+            return new Result<PlanningResult, PlanningError>.Failure(new PlanningError(
                 PlanningErrorCodes.InvalidSubdivision, nameof(PlanningQuery.SubdivisionCode),
                 "Use a valid first-level ISO 3166-2 subdivision code belonging to the selected country."));
         }
@@ -43,7 +44,9 @@ public sealed class LeavePlanningService(
         var holidays = HolidayCalendarNormalizer.Normalize(records, query.CountryCode,
             query.SubdivisionCode, query.FromDate, query.ToDate);
 
-        var strategy = strategies.Get(query.Priority);
+        var strategy = strategies.GetValueOrDefault(query.Priority)
+            ?? throw new ArgumentOutOfRangeException("priority", query.Priority,
+                "No recommendation strategy is registered for this priority.");
 
         var selection = FindBest(query.FromDate,
             query.ToDate,
@@ -62,8 +65,13 @@ public sealed class LeavePlanningService(
             .Where(holiday => holiday.Date >= selection.Candidate.StartDate && holiday.Date <= selection.Candidate.EndDate)
             .ToArray();
 
+        var candidate = selection.Candidate;
+        var nonLeaveDays = candidate.TotalDays - candidate.LeaveDaysRequired;
+        var reason = strategy.DescribeSelection(candidate, query.MinTotalDays);
+        var explanation = $"{reason} The break has {candidate.TotalDays} calendar days, requires {candidate.LeaveDaysRequired} leave days, and includes {nonLeaveDays} days covered by weekends or applicable public holidays.";
+
         return new Result<PlanningResult, PlanningError>.Success(new PlanningResult(query, selection, holidaysInRecommendation,
-            RecommendationExplanationBuilder.Build(query, selection, strategy)));
+            explanation));
     }
 
     private static LeavePlanSelection? FindBest(

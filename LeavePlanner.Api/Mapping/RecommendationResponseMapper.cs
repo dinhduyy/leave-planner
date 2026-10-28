@@ -1,5 +1,5 @@
 using LeavePlanner.Application.Models;
-using LeavePlanner.Contracts;
+using LeavePlanner.Dtos;
 
 namespace LeavePlanner.Mapping;
 

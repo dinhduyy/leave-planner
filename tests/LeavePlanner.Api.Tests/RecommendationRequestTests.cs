@@ -1,9 +1,9 @@
 using LeavePlanner.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
-using LeavePlanner.Application.Services;
+using LeavePlanner.Configuration;
 using LeavePlanner.Application.Models;
-using LeavePlanner.Contracts;
-using LeavePlanner.Domain.Strategies;
+using LeavePlanner.Dtos;
+using LeavePlanner.Domain.Abstractions;
 using LeavePlanner.Mapping;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,12 +23,11 @@ public sealed class RecommendationRequestTests
         Assert.Equal(typeof(PlanningPriority), responsePriority.PropertyType);
     }
 
-    private static readonly RecommendationStrategyRegistry Strategies = new([
-        new LongestBreakStrategy(), new MinimumLeaveStrategy(), new BestEfficiencyStrategy()
-    ]);
     private static readonly IServiceProvider Services = new ServiceCollection()
-        .AddSingleton(Strategies)
+        .AddLeavePlanning()
         .BuildServiceProvider();
+    private static readonly IReadOnlyDictionary<PlanningPriority, IRecommendationStrategy> Strategies =
+        Services.GetRequiredService<IReadOnlyDictionary<PlanningPriority, IRecommendationStrategy>>();
 
     [Fact]
     public void NormalizeCountryAndBlankSubdivisionWithoutChangingDates()
