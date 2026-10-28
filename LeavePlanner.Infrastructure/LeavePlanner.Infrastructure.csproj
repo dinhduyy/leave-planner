@@ -11,4 +11,7 @@
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="LeavePlanner.Infrastructure.Tests" />
+  </ItemGroup>
 </Project>

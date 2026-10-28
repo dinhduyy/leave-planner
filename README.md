@@ -2,7 +2,7 @@
 
 Leave Planner recommends one continuous break within a date range and leave budget. It tells an employee when the break starts and ends, how many calendar days it lasts, and exactly which workdays require leave. The recommendation is planning advice, not company approval.
 
-The assignment integrates the public [Nager.Holidays Community v4 API](https://nagerholidays.com/api) and performs the calendar and ranking logic in C#. It uses the provider's raw holiday data, not a long-weekend endpoint. No database is needed: a request has no user account or history, and results are calculated from the provider data fetched for that request. The provider is configured once at startup; clients do not choose a provider per request.
+The assignment integrates the public [Nager.Holidays Community v4 API](https://nagerholidays.com/api) and performs the calendar and ranking logic in C#. It uses the provider's raw holiday data, not a long-weekend endpoint. No database is needed: a request has no user account or history, and results are calculated from provider data retrieved directly or from the in-memory cache. The provider is configured once at startup; clients do not choose a provider per request.
 
 ## Run and try it
 
@@ -27,6 +27,8 @@ dotnet test .\LeavePlanner.sln
 The optional live smoke test is to run the application and send the first `.http` request. It is separate from automated tests.
 
 `HolidayProvider:BaseUrl` and `HolidayProvider:TimeoutSeconds` are configured in `LeavePlanner.Api/appsettings.json`; the defaults are the HTTPS Nager endpoint and ten seconds. Do not set the base URL from a request.
+
+`HolidayCache:DurationHours` defaults to `24` and `HolidayCache:MaxEntries` to `512` in the same file. Duration must be 1–8760 hours and the entry limit must be positive; invalid settings fail at startup. The cache stores the validated country catalog and each country's yearly holiday list, including valid empty lists, for an absolute lifetime measured from a successful load. It is private to each application process and clears on restart. Data can be up to the configured lifetime old; different processes may refresh at different times. Once an entry expires, an upstream failure produces the normal provider error rather than serving stale data. The entry limit counts cached responses, not bytes.
 
 ## API
 
@@ -76,7 +78,7 @@ If no break qualifies, HTTP 200 has `recommendation: null` and an explanation su
 
 ## Data and limits
 
-The service fetches every year in the search range from Nager v4, checks the country against `/api/v4/Countries/Available`, and uses `date`, `name`, `countryCode`, `nationalHoliday`, `subdivisionCodes`, and `holidayTypes`. An empty valid holiday list is different from an unsupported country. Nager v4 supports only a provider-defined window of years; years outside it are rejected with a field error. Past dates are accepted when their year is supported.
+The service retrieves every year in the search range from Nager v4 or the in-memory cache, checks the country against `/api/v4/Countries/Available`, and uses `date`, `name`, `countryCode`, `nationalHoliday`, `subdivisionCodes`, and `holidayTypes`. An empty valid holiday list is different from an unsupported country. Nager v4 supports only a provider-defined window of years; years outside it are rejected with a field error. Past dates are accepted when their year is supported.
 
 Without a subdivision, only nationwide holidays apply and the response says `national-only`. With a subdivision, nationwide and matching regional holidays apply. The ISO 3166-2 first-level code catalog is bundled from a pinned [Ipregistry snapshot](LeavePlanner.Infrastructure/ReferenceData/SOURCE.md), because Nager v4 does not publish a subdivision list. A valid ISO code does not guarantee complete local holiday coverage; the response describes only holidays listed by the provider. No company-specific calendar, half days, shift work, substitute-day policy, leave balance, or multiple-break planning is included.
 
@@ -95,7 +97,7 @@ LeavePlanner.sln
     └── LeavePlanner.Infrastructure.Tests/
 ```
 
-`Domain` owns the pure `LeaveCalendar`, candidate enumeration in `LeavePlannerOptimizer`, and three ranking Strategies. Each Strategy carries a `PlanningPriority` enum value, minimum-length requirement and selection reason. `Application` depends on Domain; it holds `IHolidaySource` and `ISubdivisionCatalog`, resolves Strategies through a registry, coordinates yearly fetches, normalizes holidays and builds the business explanation. `Infrastructure` depends on Application: its Nager adapter separates HTTP/status/timeout handling from v4 response parsing, and its reference-data adapter holds the subdivision catalog. `LeavePlanner.Api` composes the layers and owns JSON contracts, request validation, response mapping, and controllers. Adding a Strategy requires implementing `IRecommendationStrategy` and registering it explicitly in `AddLeavePlanning`; adding a provider requires an `IHolidaySource` adapter and changing startup infrastructure registration. Tests use synthetic data and fake HTTP handlers, so they do not depend on live provider changes.
+`Domain` owns the pure `LeaveCalendar`, candidate enumeration in `LeavePlannerOptimizer`, and three ranking Strategies. Each Strategy carries a `PlanningPriority` enum value, minimum-length requirement and selection reason. `Application` depends on Domain; it holds `IHolidaySource` and `ISubdivisionCatalog`, resolves Strategies through a registry, coordinates yearly fetches, normalizes holidays and builds the business explanation. `Infrastructure` depends on Application: its Nager adapter separates HTTP/status/timeout handling from v4 response parsing, a cache decorator reuses validated provider data, and its reference-data adapter holds the subdivision catalog. `LeavePlanner.Api` composes the layers and owns JSON contracts, request validation, response mapping, and controllers. Adding a Strategy requires implementing `IRecommendationStrategy` and registering it explicitly in `AddLeavePlanning`; adding a provider requires an `IHolidaySource` adapter and changing startup infrastructure registration. Tests use synthetic data and fake HTTP handlers, so they do not depend on live provider changes.
 
 Request fields use Data Annotations; cross-field date and priority rules use `IValidatableObject`. ASP.NET Core's `[ApiController]` returns field-level `ValidationProblemDetails` before the controller runs. Provider-supported country and subdivision checks remain in the planning service.
 
