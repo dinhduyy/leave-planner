@@ -1,3 +1,5 @@
+using LeavePlanner.Application.Enums;
+using LeavePlanner.Domain.Enums;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
@@ -84,6 +86,36 @@ public sealed class RecommendationEndpointTests
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         using var body = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync());
         Assert.True(body.RootElement.GetProperty("errors").TryGetProperty("countryCode", out _));
+    }
+
+    [Fact]
+    public async Task UnsupportedSubdivisionReturnsValidationProblem()
+    {
+        using var factory = Factory((_, _) => []);
+        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions { BaseAddress = new Uri("https://localhost") });
+
+        var response = await client.PostAsJsonAsync("/api/leave-plans/recommendation", Request() with { SubdivisionCode = "AT-0" });
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        using var body = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync());
+        Assert.True(body.RootElement.GetProperty("errors").TryGetProperty("subdivisionCode", out _));
+    }
+
+    [Fact]
+    public async Task UnexpectedFailureReturnsSanitizedProblem()
+    {
+        using var factory = Factory((_, _) => throw new InvalidOperationException("Secret synthetic details"));
+        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions { BaseAddress = new Uri("https://localhost") });
+
+        var response = await client.PostAsJsonAsync("/api/leave-plans/recommendation", Request());
+
+        Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+        Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.Contains("\"status\":500", body);
+        Assert.Contains("\"title\":\"Internal server error\"", body);
+        Assert.DoesNotContain("Secret synthetic details", body);
+        Assert.DoesNotContain("stackTrace", body, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

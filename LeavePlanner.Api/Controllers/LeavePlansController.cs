@@ -1,7 +1,9 @@
+using LeavePlanner.Application.Errors;
 using LeavePlanner.Application.Services;
 using LeavePlanner.Contracts;
 using LeavePlanner.Mapping;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace LeavePlanner.Controllers;
 
@@ -22,7 +24,20 @@ public sealed class LeavePlansController(
         [FromBody] RecommendationRequest request, CancellationToken cancellationToken)
     {
         var query = RecommendationRequestMapper.Map(request, strategies);
+
         var result = await planningService.RecommendAsync(query, cancellationToken);
-        return Ok(mapper.Map(result));
+
+        return result.Match<ActionResult<RecommendationResponse>>(
+            value => Ok(mapper.Map(value)),
+            error =>
+            {
+                if (error is not PlanningValidationError validation)
+                {
+                    throw new InvalidOperationException($"No HTTP mapping for planning error '{error.Code}'.");
+                }
+
+                ModelState.AddModelError(JsonNamingPolicy.CamelCase.ConvertName(validation.Field), validation.Description);
+                return ValidationProblem();
+            });
     }
 }
