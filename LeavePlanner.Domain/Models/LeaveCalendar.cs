@@ -1,4 +1,4 @@
-namespace LeavePlanner.Domain.Calendar;
+namespace LeavePlanner.Domain.Models;
 
 /// <summary>
 /// The fixed Monday–Friday work calendar for one inclusive planning range.

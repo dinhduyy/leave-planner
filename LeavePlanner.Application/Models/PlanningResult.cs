@@ -1,5 +1,4 @@
-using LeavePlanner.Domain.Calendar;
-using LeavePlanner.Domain.Planning;
+using LeavePlanner.Domain.Models;
 
 namespace LeavePlanner.Application.Models;
 

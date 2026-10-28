@@ -1,7 +1,6 @@
+using LeavePlanner.Application.Services;
 using LeavePlanner.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
-using LeavePlanner.Application.Services;
-using LeavePlanner.Domain.Strategies;
 
 namespace LeavePlanner.Contracts;
 
@@ -50,7 +49,9 @@ public sealed record RecommendationRequest : IValidatableObject
 
         var strategies = (RecommendationStrategyRegistry?)validationContext.GetService(typeof(RecommendationStrategyRegistry))
             ?? throw new InvalidOperationException("Recommendation strategies are not registered for request validation.");
+
         var strategy = strategies.Find(Priority);
+
         if (strategy is null)
         {
             yield return new ValidationResult("Use longestBreak, minimumLeave, or bestEfficiency.", ["priority"]);

@@ -1,7 +1,7 @@
 using LeavePlanner.Application.Models;
-using LeavePlanner.Domain.Calendar;
+using LeavePlanner.Domain.Models;
 
-namespace LeavePlanner.Application.Services;
+namespace LeavePlanner.Application.Helpers;
 
 public static class HolidayCalendarNormalizer
 {

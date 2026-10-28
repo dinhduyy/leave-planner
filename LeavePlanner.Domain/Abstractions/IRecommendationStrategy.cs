@@ -1,7 +1,7 @@
 using LeavePlanner.Domain.Enums;
-using LeavePlanner.Domain.Planning;
+using LeavePlanner.Domain.Models;
 
-namespace LeavePlanner.Domain.Strategies;
+namespace LeavePlanner.Domain.Abstractions;
 
 public interface IRecommendationStrategy
 {

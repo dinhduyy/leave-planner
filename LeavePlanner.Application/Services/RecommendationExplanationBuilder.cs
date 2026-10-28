@@ -1,6 +1,6 @@
 using LeavePlanner.Application.Models;
-using LeavePlanner.Domain.Planning;
-using LeavePlanner.Domain.Strategies;
+using LeavePlanner.Domain.Abstractions;
+using LeavePlanner.Domain.Models;
 
 namespace LeavePlanner.Application.Services;
 

@@ -2,16 +2,14 @@ using LeavePlanner.Application.Enums;
 
 namespace LeavePlanner.Application.Errors;
 
-public sealed class HolidaySourceException : Exception
+public sealed class HolidaySourceException(
+    HolidaySourceFailure failure,
+    string message,
+    int? year = null,
+    Exception? innerException = null)
+    : Exception(message, innerException)
 {
-    public HolidaySourceException(HolidaySourceFailure failure, string message, int? year = null, Exception? innerException = null)
-        : base(message, innerException)
-    {
-        Failure = failure;
-        Year = year;
-    }
+    public HolidaySourceFailure Failure { get; } = failure;
 
-    public HolidaySourceFailure Failure { get; }
-
-    public int? Year { get; }
+    public int? Year { get; } = year;
 }

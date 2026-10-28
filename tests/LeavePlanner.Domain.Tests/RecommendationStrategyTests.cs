@@ -1,5 +1,6 @@
+using LeavePlanner.Domain.Abstractions;
 using LeavePlanner.Domain.Enums;
-using LeavePlanner.Domain.Planning;
+using LeavePlanner.Domain.Models;
 using LeavePlanner.Domain.Strategies;
 
 namespace LeavePlanner.Domain.Tests;

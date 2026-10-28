@@ -1,4 +1,4 @@
-using LeavePlanner.Domain.Calendar;
+using LeavePlanner.Domain.Models;
 
 namespace LeavePlanner.Domain.Tests;
 

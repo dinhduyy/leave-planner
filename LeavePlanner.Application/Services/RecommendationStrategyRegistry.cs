@@ -1,5 +1,5 @@
+using LeavePlanner.Domain.Abstractions;
 using LeavePlanner.Domain.Enums;
-using LeavePlanner.Domain.Strategies;
 
 namespace LeavePlanner.Application.Services;
 
@@ -21,7 +21,6 @@ public sealed class RecommendationStrategyRegistry
         {
             throw new ArgumentException("The default longest-break strategy must be registered.", nameof(strategies));
         }
-
     }
 
     public IRecommendationStrategy? Find(PlanningPriority? priority) =>

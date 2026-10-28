@@ -1,5 +1,5 @@
 using LeavePlanner.Application.Services;
-using LeavePlanner.Domain.Planning;
+using LeavePlanner.Domain.Abstractions;
 using LeavePlanner.Domain.Strategies;
 using LeavePlanner.Mapping;
 
@@ -13,7 +13,6 @@ public static class ApplicationServiceCollectionExtensions
         services.AddSingleton<IRecommendationStrategy, MinimumLeaveStrategy>();
         services.AddSingleton<IRecommendationStrategy, BestEfficiencyStrategy>();
         services.AddSingleton<RecommendationStrategyRegistry>();
-        services.AddSingleton<LeavePlannerOptimizer>();
         services.AddScoped<LeavePlanningService>();
         services.AddSingleton<RecommendationResponseMapper>();
         return services;
